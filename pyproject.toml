@@ -1,0 +1,27 @@
+[project]
+name = "saascope"
+version = "0.1.0"
+description = "Autonomous SaaS audit tooling: explore a SaaS app, capture every step, and let Claude write the audit report, product overview, and demo-video script."
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40",
+    "playwright>=1.45",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+    "rich>=13.7",
+    # Autonomous explorer (the "brain"). Pin/verify against your installed version.
+    "browser-use>=0.2",
+    # Crawl / inventory + tech detection.
+    "crawl4ai>=0.6",
+]
+
+[project.optional-dependencies]
+# Managed cloud browsers + session replay video, instead of self-hosted Steel.
+cloud = ["browserbase>=1.0"]
+
+[project.scripts]
+saascope = "saascope.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

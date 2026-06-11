@@ -1,0 +1,60 @@
+# Target ---------------------------------------------------------------------
+target_url: "https://app.example-saas.com"
+login_url: "https://app.example-saas.com/login"
+
+# Auth — run `saascope login` once (SSO/2FA/CAPTCHA by hand); session reused -----
+auth:
+  session_file: "storage_state.json"
+  username: "env:SAAS_USERNAME"
+  password: "env:SAAS_PASSWORD"
+  username_selector: 'input[name="email"]'
+  password_selector: 'input[name="password"]'
+  submit_selector: 'button[type="submit"]'
+
+# LLM (writer stages only; the walk uses no LLM) -----------------------------
+llm:
+  provider: "anthropic"          # anthropic | openai | gemini | ollama
+  model: "claude-opus-4-8"
+  explore_provider: "anthropic"
+  explore_model: "claude-sonnet-4-6"
+
+# Exploration — exhaustive, deterministic walk of the WHOLE product ----------
+exploration:
+  max_steps: 120                 # total coverage budget (screens + actions)
+  max_actions_per_screen: 25     # cap in-page actions per screen
+  headless: true
+  viewport: { width: 1440, height: 900 }
+
+# Annotation — Scribe-style badge+box on each step, PII redaction ------------
+annotate:
+  spotlight: true                # dim everything but the highlighted element
+  redact: true                   # cover emails / numbers / field values with bars (stills only)
+
+# Video kit — per-screen clean clips + two retina stills per step ------------
+video:
+  record: true                   # record one clean .webm per screen (no badges burned in)
+  canvas: { width: 1920, height: 1080 }   # 16:9
+  device_scale_factor: 2         # retina stills
+  # NOTE: clips are NOT PII-redacted (only stills are) — record on a demo/seed account.
+
+# Safety guard — read_only never submits/saves/mutates -----------------------
+safety:
+  mode: "read_only"              # read_only | off
+
+# Stages ---------------------------------------------------------------------
+stages:
+  explore: true     # exhaustive annotated walk + inputs/outputs/network capture
+  crawl: true       # crawl4ai inventory + tech detection (complements network detect)
+  journey: true     # 00_user_journey.md + .html  (complete annotated walkthrough)
+  qa: true          # 04_bug_report.md
+  analyze: true     # 01_audit_report.md (incl. in/out + data-flow map)
+  overview: true    # 02_saas_overview.md
+  script: true      # 03_demo_script.md
+  storyboard: true  # video/ : shotlist.json + storyboard.html (editor kit)
+
+journey:
+  caption_batch: 6
+
+output:
+  formats: ["md"]                # add "pdf","docx" (needs pandoc)
+  max_images_to_llm: 16
