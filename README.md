@@ -129,5 +129,3 @@ violate a SaaS's terms and trip anti-bot defenses.
   `storage_state.json`, and `runs/` are gitignored.
 - Cap `exploration.max_steps`; use a cheap/local `explore_model`.
 
-## License
-Choose your own (MIT recommended).
